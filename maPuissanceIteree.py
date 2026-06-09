@@ -47,13 +47,13 @@ def stochastique(A) :
                 A[k][i] /= temp
     return A        
 
-def matriceTransistion(A) :
+def matriceTransistion(A,B) :
     a = 0.85
     M = np.zeros((A.shape[0],A.shape[0]))
     for i in range (A.shape[0]):
         for j in range (A.shape[0]) :
             if (sommeTableau(j,A) != 0):    
-                M[i][j] = a*A[i][j] + (1-a)/A.shape[0]
+                M[i][j] = a*B[i][j] + (1-a)/A.shape[0]
             else:
                 M[i][j] = 1/A.shape[0]
     return M       
@@ -81,7 +81,5 @@ def verification(Q,e = 1e-10) :
     else : 
         return "le vecteur retourné est solution de l'équation : r = Qr", R
 
-print (verification(Q))
-P = matriceTransistion(transposee(B))
-print(P)
+P = matriceTransistion(transposee(B),stochastique(transposee(B)))
 print(verification(P))
