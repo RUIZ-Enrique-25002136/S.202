@@ -68,7 +68,7 @@ def sommeTableau(j,A) :
     return (temp)
     
 
-Q = (transposee(A))
+Q = (stochastique(transposee(A)))
 print(Q)
 
 def verification(Q,e = 1e-10) : 
