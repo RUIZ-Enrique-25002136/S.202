@@ -21,20 +21,24 @@ A = np.array([
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0]],dtype = float)
 
-B =np.array([[0,0,0,0,0],
- [1,0,0,0,0],
- [1,0,0,1,0],
- [1,1,0,0,0],
- [1,1,0,0,0]],dtype = float)
+def creeMatriceAleatoire (i):
+    return np.random.rand(i);
 
 def puissanceIteree (A,e) :
-    Xn = np.random.rand(len(A))
-    XnOld = 0
-    while (norme(Xn - XnOld) > e) :
-        XnOld = Xn
-        AXn = A.dot(Xn)
-        Xn = AXn / norme(AXn)
-    return Xn, norme(A.dot(Xn))
+    Xn = Xo.copy()
+    XnOld = np.zeros(len(A))
+    if (estStochastique(A)) :
+        while (norme(Xn - XnOld) > e) :
+            XnOld = Xn.copy()
+            AXn = A.dot(Xn)
+            Xn = AXn.copy()
+        return Xn
+    else :
+        while (norme(Xn - XnOld) > e) :
+            XnOld = Xn.copy()
+            AXn = A.dot(Xn)
+            Xn = AXn / norme(AXn)
+        return Xn
 
 def stochastique(A) :
     for i in range (A.shape[0]):
@@ -45,9 +49,35 @@ def stochastique(A) :
         for k in range (A.shape[0]) :
             if (A[k][i] == 1) :
                 A[k][i] /= temp
-    return A        
+    return A
 
-def matriceTransistion(A,B) :
+def estStochastique(A) :
+    for i in range (A.shape[0]):
+        temp = 0
+        for j in range (A.shape[0]) :
+            temp += A[j][i]
+        if (temp != 1):
+            return False
+    return True
+
+def transposee(A) :
+    return A.T
+
+def solutionEquation(V,W) :
+    return norme(V - W)
+
+# r est notre vecteur retourné dans l'algorithme ci-dessus
+def verification(Q,e) : 
+    r = puissanceIteree(Q,e)[0]
+    # r est notre vecteur retourné dans l'algorithme ci-dessus
+    R = solutionEquation(r, Q.dot(r))
+    #R va nous afficher l'écart (sensé tendre vers le nul) entre r et Q*r
+    if (R > 1e-5):     #ici, 1e-5 est la marge d'erreur
+        return "le vecteur retourné n'est pas solution de l'équation : r = Qr", R
+    else : 
+        return "le vecteur retourné est solution de l'équation : la norme de r = Qr = ", R
+    
+def matriceTransition(A,B) :
     a = 0.85
     M = np.zeros((A.shape[0],A.shape[0]))
     for i in range (A.shape[0]):
@@ -58,28 +88,111 @@ def matriceTransistion(A,B) :
                 M[i][j] = 1/A.shape[0]
     return M       
 
-def transposee(A) :
-    return A.T
-
 def sommeTableau(j,A) :
     temp = 0
     for i in range (A.shape[0]):
         temp += A[i][j]
     return (temp)
-    
 
-Q = (stochastique(transposee(A)))
-print(Q)
-
-def verification(Q,e = 1e-10) : 
+def equation(Q,e) : 
     r = puissanceIteree(Q,e)[0]
     # r est notre vecteur retourné dans l'algorithme ci-dessus
-    R = norme(r - Q.dot(r))
-    #R va nous afficher l'écart (sensé tendre vers le nul) entre r et Q*r
-    if (R > 1e-5):     #ici, 1e-10 est la marge d'erreur
-        return "le vecteur retourné n'est pas solution de l'équation : r = Qr", R
-    else : 
-        return "le vecteur retourné est solution de l'équation : r = Qr", R
+    return solutionEquation(r, Q.dot(r))
 
-P = matriceTransistion(transposee(B),stochastique(transposee(B)))
-print(verification(P))
+e = 10**(-10)
+
+Xo = creeMatriceAleatoire(len(A))
+
+def partie3() :
+    #ajout d'1 hub pointé par aucune page 
+    
+    H1 = np.array(
+            [[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0]]
+             ,dtype = float)
+    
+    #ajout de 2 hubs pointés par aucune page 
+    
+    H2 = np.array([
+         [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0]]
+         ,dtype=float)
+    
+    #ajout d'une autoritée ne pointant aucune page 
+    
+    A1 = np.array([
+         [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0]]
+         ,dtype=float)
+    
+    #ajout de 2 autorités ne pointant aucune page 
+    
+    A2 = np.array([
+         [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0],
+         [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0]]
+         ,dtype = float)
+    
+    M = matriceTransition(transposee(A),stochastique(transposee(A)))
+    MH1 = matriceTransition(transposee(H1),stochastique(transposee(H1)))
+    MH2 = matriceTransition(transposee(H2),stochastique(transposee(H2)))
+    MA1 = matriceTransition(transposee(A1),stochastique(transposee(A1)))
+    MA2 = matriceTransition(transposee(A2),stochastique(transposee(A2)))
+     
+    print("\nPour une matrice sans hub ni autorité :\n")
+    print (puissanceIteree (M,e))
+    print("\nEn ajoutant un hub pointé par aucune page :\n")
+    print (puissanceIteree (MH1,e))
+    print("\nEn ajoutant 2 hubs pointés par aucune page :\n")
+    print (puissanceIteree (MH2,e))
+    print("\nEn ajoutant une autorité ne pointant aucune page:\n")
+    print (puissanceIteree (MA1,e))
+    print("\nEn ajoutant 2 autorités ne pointant aucune page:\n")
+    print (puissanceIteree (MA2,e))
