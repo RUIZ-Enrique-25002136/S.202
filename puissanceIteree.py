@@ -70,7 +70,7 @@ def solutionEquation(V,W) :
 
 # r est notre vecteur retourné dans l'algorithme ci-dessus
 def verification(Q,e) : 
-    r = puissanceIteree(Q,e)[0]
+    r = puissanceIteree(Q,e)
     # r est notre vecteur retourné dans l'algorithme ci-dessus
     R = solutionEquation(r, Q.dot(r))
     #R va nous afficher l'écart (sensé tendre vers le nul) entre r et Q*r
@@ -96,7 +96,7 @@ def sommeTableau(j,A) :
     return (temp)
 
 def equation(Q,e) : 
-    r = puissanceIteree(Q,e)[0]
+    r = puissanceIteree(Q,e)
     # r est notre vecteur retourné dans l'algorithme ci-dessus
     return solutionEquation(r, Q.dot(r))
 
