@@ -24,7 +24,7 @@ A = np.array([
 a = 0.85
 
 def creeMatriceAleatoire (i):
-    return np.random.rand(i);
+    return np.random.rand(i)
 
 def puissanceIteree (A,e,Xo) :
     Xn = Xo.copy()
@@ -34,13 +34,13 @@ def puissanceIteree (A,e,Xo) :
             XnOld = Xn.copy()
             AXn = A.dot(Xn)
             Xn = AXn.copy()
-        return Xn
+        return Xn;
     else :
         while (norme(Xn - XnOld) > e) :
             XnOld = Xn.copy()
             AXn = A.dot(Xn)
             Xn = AXn / norme(AXn)
-        return Xn
+        return Xn;
 
 def stochastique(A) :
     for i in range (A.shape[0]):
@@ -58,7 +58,7 @@ def estStochastique(A) :
         temp = 0
         for j in range (A.shape[0]) :
             temp += A[j][i]
-        if (temp != 1):
+        if (temp != 1.0):
             return False
     return True
 
@@ -69,8 +69,8 @@ def solutionEquation(V,W) :
     return norme(V - W)
 
 # r est notre vecteur retourné dans l'algorithme ci-dessus
-def verification(Q,e) : 
-    r = puissanceIteree(Q,e)
+def verification(Q,e,Xo) : 
+    r = puissanceIteree(Q,e,Xo)
     # r est notre vecteur retourné dans l'algorithme ci-dessus
     R = solutionEquation(r, Q.dot(r))
     #R va nous afficher l'écart (sensé tendre vers le nul) entre r et Q*r
@@ -100,9 +100,7 @@ def equation(Q,e) :
     # r est notre vecteur retourné dans l'algorithme ci-dessus
     return solutionEquation(r, Q.dot(r))
 
-e = 10**(-10)
 
-Xo = creeMatriceAleatoire(len(A))
 
 def partie3() :
     H1 = np.array([
@@ -212,3 +210,11 @@ def partie3() :
     print("\nEn ajoutant 2 autorités ne pointant aucune page:\n")
     print (puissanceIteree (MA2,e,Xo))
     print("\n")
+
+e = 10**(-10)
+a= 0.85
+
+Xo = creeMatriceAleatoire(len(A))
+print (Xo)
+print (puissanceIteree(matriceTransition(transposee(A),stochastique(transposee(A)),a),e,Xo))
+print (verification(stochastique(transposee(A)),e,Xo))
